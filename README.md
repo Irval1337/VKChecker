@@ -1,2 +1,4 @@
-# VKChecker
-Simple VK Accounts checker on C# using public library VkNet
+## VKChecker
+Простой чекер аккаунтов ВКонтакте на C#, сонованный на возможностях публичной библиотеки VKNet. Официальная тема программы - https://datastock.biz/threads/1920/
+<br>В случае возникновения проблем/вопросов/предложений, прошу вас писать в Telegram (https://t.me/Irval1337) или ВКонтакте (https://vk.com/irval26) разработчику программы.</br>
+###### При поддержке форума SMM продвижения в социальных сетях - DataStock.biz
