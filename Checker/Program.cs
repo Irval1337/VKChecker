@@ -8,6 +8,8 @@ using VkNet.Model;
 using VkNet.Enums.Filters;
 using VkNet.Exception;
 using System.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 
 namespace Checker
 {
@@ -22,6 +24,8 @@ namespace Checker
         public static List<string> invalid = new List<string>();
 
         public static List<ulong> appids = new List<ulong>() { 2890984, 6121396, 2890984, 5256902, 5676187, 3116505, 6146827 };
+
+        public static string[] Proxies;
 
         static void Main(string[] args)
         {
@@ -115,6 +119,17 @@ namespace Checker
             }
             int count = accounts.Count / max;
 
+            if (!File.Exists("proxies.txt"))
+                File.Create("proxies.txt").Close();
+
+            string[] proxies = File.ReadAllLines("proxies.txt");
+            Console.Clear();
+            Console.WriteLine(Data.Default.Language == "ru" ? $"Обнаружено {proxies.Length} прокси. Желаете включить их поддержку?" : $"Found {proxies.Length} proxies. Would you like to enable its support?");
+            string Res = Console.ReadLine().ToLower();
+            Proxies = !res.StartsWith("n") && !res.StartsWith("н") || proxies.Length == 0 ? proxies : null;
+
+            Console.Clear();
+
             for (int i = 0; i < max; i++)
             {
                 var checker = new Thread(Checker);
@@ -172,12 +187,17 @@ namespace Checker
         static void Checker(object obj)
         {
             var list = (List<string>)obj;
+            int proxy = 0;
 
             for (int i = 0; i < list.Count; i++)
             {
                 try
                 {
-                    VkApi vkapi = new VkApi();
+                    var serviceCollection = new ServiceCollection();
+                    if (Proxies != null)
+                        serviceCollection.AddSingleton<IWebProxy>(new WebProxy(Proxies[proxy]));
+
+                    VkApi vkapi = new VkApi(serviceCollection);
                     var data = list[i].Split(':');
                     vkapi.Authorize(new ApiAuthParams()
                     {
@@ -193,6 +213,11 @@ namespace Checker
                 catch (VkAuthorizationException)
                 {
                     invalid.Add(list[i]);
+                }
+                catch
+                {
+                    i--;
+                    proxy++;
                 }
             }
         }
