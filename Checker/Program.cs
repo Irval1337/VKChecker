@@ -43,7 +43,7 @@ namespace Checker
                 Data.Default.Language = response;
                 Data.Default.Save();
             }
-            Console.WriteLine("VK Accounts Checker by Irval. Special for Datastock.biz" + (Data.Default.Language == "ru" ? "\nОфициальная тема: https://datastock.biz/threads/1920/ \nТекущая версия: 1.0.12\n\n" : "\nOfficial thread: https://datastock.biz/threads/1920/ \nCurrent version: 1.0.12\n\n"));
+            Console.WriteLine("VK Accounts Checker by Irval. Special for Datastock.biz" + (Data.Default.Language == "ru" ? "\nОфициальная тема: https://datastock.biz/threads/1920/ \nТекущая версия: 1.0.13\n\n" : "\nOfficial thread: https://datastock.biz/threads/1920/ \nCurrent version: 1.0.13\n\n"));
 
             Console.WriteLine(Data.Default.Language == "ru" ? "Желаете ли вы сменить язык программы?" : "Do you want to change program language?");
             var resp = Console.ReadLine().ToLower();
@@ -194,7 +194,7 @@ namespace Checker
                 try
                 {
                     var serviceCollection = new ServiceCollection();
-                    if (Proxies != null)
+                    if (Proxies != null && proxy < Proxies.Length)
                         serviceCollection.AddSingleton<IWebProxy>(new WebProxy(Proxies[proxy]));
 
                     VkApi vkapi = new VkApi(serviceCollection);
@@ -216,7 +216,8 @@ namespace Checker
                 }
                 catch
                 {
-                    i--;
+                    if (Proxies.Length > proxy + 1)
+                        i--;
                     proxy++;
                 }
             }
